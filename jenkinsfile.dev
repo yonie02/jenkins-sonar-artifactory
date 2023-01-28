@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        ARTIFACTORY_API_TOKEN = credentials('artifactory-api-token')
+        ARTIFACTORY_API_TOKEN = credentials('artifactory-access-token')
         JFROG_PASSWORD = credentials('jfrog-password')
     }
     stages {
@@ -20,7 +20,7 @@ pipeline {
         stage('Push to Artifactory') {
             steps {
                 withCredentials([string(credentialsId: 'artifactory-api-token', variable: 'ARTIFACTORY_API_TOKEN')]) {
-                    sh 'curl -u ${ARTIFACTORY_API_TOKEN} -X PUT "http://lab.cloudsheger.com:8082/artifactory/java-web-app/com/example/myproject/${env.BUILD_NUMBER}/myproject-${env.BUILD_NUMBER}.jar" -T target/myproject.jar'
+                    sh 'curl -u ${ARTIFACTORY_API_TOKEN} -X PUT "http://lab.cloudsheger.com:8082/artifactory/java-web-app/demo/${env.BUILD_NUMBER}/demo-${env.BUILD_NUMBER}.jar" -T target/demo-0.0.1*.jar'
                 }
             }
         }
