@@ -8,7 +8,7 @@ pipeline {
     stages {
         stage('Checkout Git Repository') {
             steps {
-                git branch: 'artifactory', url: 'https://github.com/cloudsheger/jenkins-sonar-artifactory'
+                sh 'java --version'
             }
         }
         stage('Build Maven Job'){
