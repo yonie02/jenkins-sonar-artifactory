@@ -13,7 +13,7 @@ pipeline {
         }
         stage('Build Maven Job'){
            steps {
-              sh './mvnw install'
+              sh 'mvn clean install'
            }
         }
        stage('Upload Binaries to Jfrog Artifactory') {
