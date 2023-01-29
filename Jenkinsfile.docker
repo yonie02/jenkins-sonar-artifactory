@@ -5,8 +5,8 @@ pipeline {
     environment {
         ARTIFACTORY_URL = 'http://lab.cloudsheger.com:8082'
         ARTIFACTORY_REPO = 'docker-repo-key'
-        ARTIFACTORY_USERNAME = credentials('artifactory_credentials').username
-        ARTIFACTORY_PASSWORD = credentials('artifactory_credentials').password
+       // ARTIFACTORY_USERNAME = credentials('artifactory_credentials').username
+       // ARTIFACTORY_PASSWORD = credentials('artifactory_credentials').password
     }
     stages {
         stage('Build') {
@@ -16,8 +16,10 @@ pipeline {
         }
         stage('Push to Artifactory') {
             steps {
-                sh "docker login -u ${ARTIFACTORY_USERNAME} -p ${ARTIFACTORY_PASSWORD} ${ARTIFACTORY_URL}"
-                sh "docker push ${ARTIFACTORY_URL}/${ARTIFACTORY_REPO}/myimage"
+                withCredentials([usernamePassword(credentialsId: 'artifactory_credentials', passwordVariable: 'ARTIFACTORY_PASSWORD', usernameVariable: 'ARTIFACTORY_USERNAME')]) {
+                    sh "docker login -u ${ARTIFACTORY_USERNAME} -p ${ARTIFACTORY_PASSWORD} ${ARTIFACTORY_URL}"
+                    sh "docker push ${ARTIFACTORY_URL}/${ARTIFACTORY_REPO}/myimage"
+                }
             }
         }
         stage('Deploy to QA Server') {
