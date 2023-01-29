@@ -1,7 +1,5 @@
 pipeline {
-    agent {
-        label 'docker'
-    }
+    agent any
     environment {
         ARTIFACTORY_URL = 'http://lab.cloudsheger.com:8082'
         ARTIFACTORY_REPO = 'docker-repo-key'
