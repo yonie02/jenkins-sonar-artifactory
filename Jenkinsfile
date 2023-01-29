@@ -6,7 +6,7 @@ pipeline {
     JFROG_PASSWORD  = credentials('jfrog-password')
   }
     stages {
-        stage('Checkout Git Repository') {
+        stage('Dependecies') {
             steps {
                 sh 'java --version'
             }
