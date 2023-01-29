@@ -1,0 +1,39 @@
+pipeline {
+    agent {
+        label 'docker'
+    }
+    environment {
+        ARTIFACTORY_URL = 'http://lab.cloudsheger.com:8082'
+        ARTIFACTORY_REPO = 'docker-repo-key'
+        ARTIFACTORY_USERNAME = credentials('artifactory_credentials').username
+        ARTIFACTORY_PASSWORD = credentials('artifactory_credentials').password
+    }
+    stages {
+        stage('Build') {
+            steps {
+                sh 'docker build -t ${ARTIFACTORY_URL}/${ARTIFACTORY_REPO}/myimage .'
+            }
+        }
+        stage('Push to Artifactory') {
+            steps {
+                sh "docker login -u ${ARTIFACTORY_USERNAME} -p ${ARTIFACTORY_PASSWORD} ${ARTIFACTORY_URL}"
+                sh "docker push ${ARTIFACTORY_URL}/${ARTIFACTORY_REPO}/myimage"
+            }
+        }
+        stage('Deploy to QA Server') {
+            steps {
+                sh 'kubectl apply -f k8s/deployment.yml'
+            }
+        }
+        stage('Deploy to Stagging Server') {
+            steps {
+                sh 'kubectl apply -f k8s/deployment.yml'
+            }
+        }
+        stage('Deploy to Production') {
+            steps {
+                sh 'kubectl apply -f k8s/deployment.yml'
+            }
+        }
+    }
+}
