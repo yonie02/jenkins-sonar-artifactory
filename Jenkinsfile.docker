@@ -5,6 +5,7 @@ pipeline {
         ARTIFACTORY_REPO = 'docker-repo-key'
         DOCKER_PROJECT = 'cloudsheger'
         DOCKER_ENV = 'prod'
+        ARTIFACTORY_ACCESS_TOKEN = credentials('artifactory-access-token')
        // DOCKER_VERSION = '0.1'
        // ARTIFACTORY_USERNAME = credentials('artifactory_credentials').username
        // ARTIFACTORY_PASSWORD = credentials('artifactory_credentials').password
@@ -12,17 +13,18 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                sh 'docker build -t ${DOCKER_PROJECT}/${DOCKER_ENV} .'
+                sh 'docker build -t ${DOCKER_PROJECT}/${DOCKER_ENV}/docker-image .'
             }
         }
         stage('Push to Artifactory') {
-            steps {
-                withCredentials([usernamePassword(credentialsId: 'artifactory_credentials', passwordVariable: 'ARTIFACTORY_PASSWORD', usernameVariable: 'ARTIFACTORY_USERNAME')]) {
-                    sh "docker login -u ${ARTIFACTORY_USERNAME} -p ${ARTIFACTORY_PASSWORD} ${ARTIFACTORY_URL}"
-                    sh "docker push ${DOCKER_PROJECT}/${DOCKER_ENV}"
-                }
-            }
+    steps {
+        script {
+           // def accessToken = credentials('artifactory_access_token')
+            sh "docker login -u _ -p ${ARTIFACTORY_ACCESS_TOKEN} ${ARTIFACTORY_URL}"
+            sh "docker push ${DOCKER_PROJECT}/${DOCKER_ENV}/docker-image"
         }
+    }
+}
         stage('Deploy to QA Server') {
             steps {
                 sh 'kubectl apply -f k8s/deployment.yml'
