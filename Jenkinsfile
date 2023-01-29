@@ -24,14 +24,14 @@ pipeline {
       stage('Building Docker Image'){
           steps{
               sh '''
-              docker build -t localhost:8082/java-web-app-docker/demoapp:$BUILD_NUMBER --pull=true .
+              docker build -t localhost:8082/docker-repo-key/demoapp:$BUILD_NUMBER --pull=true .
               docker images
               '''
           }
       }
       stage('Image Scanning Trivy'){
             steps{
-               sh 'trivy image localhost:8082/java-web-app-docker/demoapp:$BUILD_NUMBER > $WORKSPACE/trivy-image-scan/trivy-image-scan-$BUILD_NUMBER.txt'
+               sh 'trivy image localhost:8082/docker-repo-key/demoapp:$BUILD_NUMBER > $WORKSPACE/trivy-image-scan/trivy-image-scan-$BUILD_NUMBER.txt'
             }
      }
      stage('Uploading Image Scan to Jrog Artifactory'){
