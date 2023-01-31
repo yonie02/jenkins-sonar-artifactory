@@ -77,7 +77,8 @@ pipeline {
 def securityScan() {
 sh '''
 mkdir -p trivy-image-scan
-trivy image localhost:8082/docker-repo-key/demoapp:$BUILD_NUMBER > $WORKSPACE/trivy-image-scan/trivy-image-scan-$BUILD_NUMBER.txt'
+cd trivy-image-scan && touch trivy-image-scan-$BUILD_NUMBER.txt
+trivy image localhost:8082/docker-repo-key/demoapp:$BUILD_NUMBER > $WORKSPACE/trivy-image-scan/trivy-image-scan-$BUILD_NUMBER.txt
 whoami 
   '''
 }
