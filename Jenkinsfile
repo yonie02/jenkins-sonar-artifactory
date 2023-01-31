@@ -25,7 +25,7 @@ pipeline {
       stage('Building Docker Image'){
           steps{
               sh '''
-              docker build -t localhost:8082/docker-repo-key/demoapp:${DOCKER_IMAGE} --pull=true .
+              docker build -t dockerized-java-app:${DOCKER_IMAGE} --pull=true .
               docker images
               '''
           }
@@ -44,13 +44,13 @@ pipeline {
          steps{
              sh '''
              docker login java-web-app-docker.jfrog.io -u admin -p ${JFROG_PASSWORD}
-             docker push localhost:8082/java-web-app-docker/demoapp:${DOCKER_IMAGE}
+             docker push dockerized-java-app:${DOCKER_IMAGE}
              '''
         }
      }
      stage('Cleaning up DockerImage'){
             steps{
-                sh 'docker rmi localhost:8082/java-web-app-docker/demoapp:${DOCKER_IMAGE}'
+                sh 'docker rmi dockerized-java-app:${DOCKER_IMAGE}'
            }
        }
     // skip a stage while creating the pipeline
@@ -79,11 +79,11 @@ def securityScan() {
 sh '''
 mkdir -p trivy-image-scan
 cd trivy-image-scan && touch trivy-image-scan-${DOCKER_IMAGE}.txt
-trivy image localhost:8082/docker-repo-key/demoapp:${DOCKER_IMAGE} > $WORKSPACE/trivy-image-scan/trivy-image-scan-${DOCKER_IMAGE}.txt
+trivy image dockerized-java-app:${DOCKER_IMAGE} > $WORKSPACE/trivy-image-scan/trivy-image-scan-${DOCKER_IMAGE}.txt
 whoami 
   '''
 }
 
-//sh 'trivy image localhost:8082/docker-repo-key/demoapp:${DOCKER_IMAGE} > $WORKSPACE/trivy-image-scan/trivy-image-scan-${DOCKER_IMAGE}.txt'
+//sh 'trivy image dockerized-java-app:${DOCKER_IMAGE} > $WORKSPACE/trivy-image-scan/trivy-image-scan-${DOCKER_IMAGE}.txt'
 
  
