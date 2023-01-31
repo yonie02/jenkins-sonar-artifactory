@@ -42,8 +42,8 @@ pipeline {
      stage('Pushing Docker Image into Jfrog'){
          steps{
              sh '''
-             docker login docker-repo-key.jfrog.io -u admin -p ${JFROG_PASSWORD}
-             docker push localhost:8082/docker-repo-key/demoapp:$BUILD_NUMBER
+             docker login java-web-app-docker.jfrog.io -u admin -p ${JFROG_PASSWORD}
+             docker push localhost:8082/java-web-app-docker/demoapp:$BUILD_NUMBER
              '''
         }
      }
