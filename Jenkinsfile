@@ -31,9 +31,9 @@ pipeline {
       }
       stage('Image Scanning Trivy'){
             steps{
-               sh 'trivy image localhost:8082/docker-repo-key/demoapp:$BUILD_NUMBER > $WORKSPACE/trivy-image-scan/trivy-image-scan-$BUILD_NUMBER.txt'
-            }
-     }
+            securityScan()
+          }
+        }
      stage('Uploading Image Scan to Jrog Artifactory'){
          steps{
           sh 'jf rt upload --url http://lab.cloudsheger.com:8082/artifactory/ --access-token ${ARTIFACTORY_ACCESS_TOKEN} trivy-image-scan/trivy-image-scan-$BUILD_NUMBER.txt trivy-scan-files/'           
@@ -52,5 +52,34 @@ pipeline {
                 sh 'docker rmi localhost:8082/java-web-app-docker/demoapp:$BUILD_NUMBER'
            }
        }
+    // skip a stage while creating the pipeline
+      stage("A stage to be skipped") {
+         when {
+            expression { false }  //skip this stage
+         }
+         steps {
+            echo 'This step will never be run'
+         }
+      }
+      
+      // Execute when branch = 'master'
+      stage("BASIC WHEN - Branch") {
+         when {
+            branch 'master'
+	 }
+         steps {
+            echo 'BASIC WHEN - Master Branch!'
+         }
+      }   
   }
 }
+
+def securityScan() {
+sh '''
+   whoami 
+  '''
+}
+
+//sh 'trivy image localhost:8082/docker-repo-key/demoapp:$BUILD_NUMBER > $WORKSPACE/trivy-image-scan/trivy-image-scan-$BUILD_NUMBER.txt'
+
+ 
