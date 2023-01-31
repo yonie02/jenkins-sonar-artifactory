@@ -4,6 +4,7 @@ pipeline {
     CI = true
     ARTIFACTORY_ACCESS_TOKEN = credentials('artifactory-access-token')
     JFROG_PASSWORD  = credentials('jfrog-password')
+    DOCKER_IMAGE = 'prod'
   }
     stages {
         stage('Dependecies') {
@@ -24,7 +25,7 @@ pipeline {
       stage('Building Docker Image'){
           steps{
               sh '''
-              docker build -t localhost:8082/docker-repo-key/demoapp:$BUILD_NUMBER --pull=true .
+              docker build -t localhost:8082/docker-repo-key/demoapp:${DOCKER_IMAGE} --pull=true .
               docker images
               '''
           }
@@ -36,20 +37,20 @@ pipeline {
         }
      stage('Uploading Image Scan to Jrog Artifactory'){
          steps{
-          sh 'jf rt upload --url http://lab.cloudsheger.com:8082/artifactory/ --access-token ${ARTIFACTORY_ACCESS_TOKEN} trivy-image-scan/trivy-image-scan-$BUILD_NUMBER.txt trivy-scan-files/'           
+          sh 'jf rt upload --url http://lab.cloudsheger.com:8082/artifactory/ --access-token ${ARTIFACTORY_ACCESS_TOKEN} trivy-image-scan/trivy-image-scan-${DOCKER_IMAGE}.txt trivy-scan-files/'           
          }
      }
      stage('Pushing Docker Image into Jfrog'){
          steps{
              sh '''
              docker login java-web-app-docker.jfrog.io -u admin -p ${JFROG_PASSWORD}
-             docker push localhost:8082/java-web-app-docker/demoapp:$BUILD_NUMBER
+             docker push localhost:8082/java-web-app-docker/demoapp:${DOCKER_IMAGE}
              '''
         }
      }
      stage('Cleaning up DockerImage'){
             steps{
-                sh 'docker rmi localhost:8082/java-web-app-docker/demoapp:$BUILD_NUMBER'
+                sh 'docker rmi localhost:8082/java-web-app-docker/demoapp:${DOCKER_IMAGE}'
            }
        }
     // skip a stage while creating the pipeline
@@ -77,12 +78,12 @@ pipeline {
 def securityScan() {
 sh '''
 mkdir -p trivy-image-scan
-cd trivy-image-scan && touch trivy-image-scan-$BUILD_NUMBER.txt
-trivy image localhost:8082/docker-repo-key/demoapp:$BUILD_NUMBER > $WORKSPACE/trivy-image-scan/trivy-image-scan-$BUILD_NUMBER.txt
+cd trivy-image-scan && touch trivy-image-scan-${DOCKER_IMAGE}.txt
+trivy image localhost:8082/docker-repo-key/demoapp:${DOCKER_IMAGE} > $WORKSPACE/trivy-image-scan/trivy-image-scan-${DOCKER_IMAGE}.txt
 whoami 
   '''
 }
 
-//sh 'trivy image localhost:8082/docker-repo-key/demoapp:$BUILD_NUMBER > $WORKSPACE/trivy-image-scan/trivy-image-scan-$BUILD_NUMBER.txt'
+//sh 'trivy image localhost:8082/docker-repo-key/demoapp:${DOCKER_IMAGE} > $WORKSPACE/trivy-image-scan/trivy-image-scan-${DOCKER_IMAGE}.txt'
 
  
