@@ -30,7 +30,8 @@ pipeline {
               '''
           }
       }
-      stage('Image Scanning Trivy'){
+     //
+	    stage('Image Scanning Trivy'){
             steps{
             securityScan()
           }
@@ -40,7 +41,7 @@ pipeline {
           sh 'jf rt upload --url http://lab.cloudsheger.com:8082/artifactory/ --access-token ${ARTIFACTORY_ACCESS_TOKEN} trivy-image-scan/trivy-image-scan-${DOCKER_IMAGE}.txt trivy-scan-files/'           
          }
      }
-     stage('Pushing Docker Image into Jfrog'){
+    // stage('Pushing Docker Image into Jfrog'){
          steps{
              sh '''
              docker login java-web-app-docker.jfrog.io -u admin -p ${JFROG_PASSWORD}
