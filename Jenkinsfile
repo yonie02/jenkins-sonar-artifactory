@@ -80,12 +80,6 @@ whoami
 
 //sh 'trivy image dockerized-java-app:${DOCKER_IMAGE} > $WORKSPACE/trivy-image-scan/trivy-image-scan-${DOCKER_IMAGE}.txt'
 
-  // stage('Pushing Docker Image into Jfrog'){
-         steps{
-             sh '''
-             docker login java-web-app-docker.jfrog.io -u admin -p ${JFROG_PASSWORD}
-             docker push dockerized-java-app:${DOCKER_IMAGE}
-             '''
-        }
-     }
-//
+
+     
+
