@@ -41,14 +41,7 @@ pipeline {
           sh 'jf rt upload --url http://lab.cloudsheger.com:8082/artifactory/ --access-token ${ARTIFACTORY_ACCESS_TOKEN} trivy-image-scan/trivy-image-scan-${DOCKER_IMAGE}.txt trivy-scan-files/'           
          }
      }
-    // stage('Pushing Docker Image into Jfrog'){
-         steps{
-             sh '''
-             docker login java-web-app-docker.jfrog.io -u admin -p ${JFROG_PASSWORD}
-             docker push dockerized-java-app:${DOCKER_IMAGE}
-             '''
-        }
-     }
+   
      stage('Cleaning up DockerImage'){
             steps{
                 sh 'docker rmi dockerized-java-app:${DOCKER_IMAGE}'
@@ -87,4 +80,12 @@ whoami
 
 //sh 'trivy image dockerized-java-app:${DOCKER_IMAGE} > $WORKSPACE/trivy-image-scan/trivy-image-scan-${DOCKER_IMAGE}.txt'
 
- 
+  // stage('Pushing Docker Image into Jfrog'){
+         steps{
+             sh '''
+             docker login java-web-app-docker.jfrog.io -u admin -p ${JFROG_PASSWORD}
+             docker push dockerized-java-app:${DOCKER_IMAGE}
+             '''
+        }
+     }
+//
