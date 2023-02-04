@@ -17,6 +17,11 @@ pipeline {
               sh 'mvn clean install'
            }
         }
+         stage('Test') {
+         steps {
+            sh 'mvn test'
+            }
+         }
        stage('Upload Binaries to Jfrog Artifactory') {
         steps {
         sh 'jf rt upload --url http://lab.cloudsheger.com:8082/artifactory/ --access-token ${ARTIFACTORY_ACCESS_TOKEN} target/demo-0.0.1-SNAPSHOT.jar java-web-app/'
